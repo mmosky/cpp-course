@@ -1,27 +1,28 @@
 /**
  * Copyright (c) 2019 MMMMMMoSky All rights reserved.
  */
-#include "ExpressionBinaryTree.h"
+#include "ExprTree.h"
+#include <iostream>
 
 using namespace std;
 
-ExpressionBinaryTreeNode::ExpressionBinaryTreeNode(
-    const string &val, AtomicExpression type)
+ExprTreeNode::ExprTreeNode(
+    const string &val, Expr type)
     : val(val), type(type)
 {
     left = NULL;
     right = NULL;
 }
 
-ExpressionBinaryTreeNode *ExpressionBinaryTree::createFromInfix(
+ExprTreeNode *ExprTree::createFromInfix(
     const string &expression)
 {
-    // TODO: 合法性检车和规范化
+    // TODO: 合法性检查和规范化
 
-    return ExpressionBinaryTree::_createFromInfix(expression);
+    return ExprTree::_createFromInfix(expression);
 }
 
-ExpressionBinaryTreeNode *ExpressionBinaryTree::_createFromInfix(
+ExprTreeNode *ExprTree::_createFromInfix(
     const string &exp)
 {
     // 传递的是 const string, 不可更改, 所以用 l, r 表示这个字符串的左右边界
@@ -58,11 +59,28 @@ ExpressionBinaryTreeNode *ExpressionBinaryTree::_createFromInfix(
     // 如果没有找到不在括号内的乘除, 那么这个节点的运算符是加减
     pos1 = pos1 < 0 ? pos2 : pos1;
 
-    ExpressionBinaryTreeNode *rt = new ExpressionBinaryTreeNode(
+    ExprTreeNode *rt = new ExprTreeNode(
         string(1, exp[pos1]), charToEnum.at(exp[pos1])); // 没有explicit啊, 为何不能触发隐式类型转换...
 
     rt->left = _createFromInfix(exp.substr(l, pos1 - l));
     rt->right = _createFromInfix(exp.substr(pos1, r - pos1));
+}
+
+void ExprTree::display(
+    ExprTreeNode *rt, int intdent) const
+{
+    if (rt == NULL)
+    {
+        return;
+    }
+    cout << string(intdent, ' ') << rt->val;
+    display(rt->left, intdent + 4);
+    display(rt->right, intdent + 4);
+}
+
+void ExprTree::display() const
+{
+    display(root, 0);
 }
 
 /* 累计用时: 40min */
