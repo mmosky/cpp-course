@@ -27,18 +27,56 @@ ExprTreeNode::~ExprTreeNode()
 
 ExprTree::ExprTree(const string &expr)
 {
-    // TODO: 合法性检查和规范化
-    root = createFromInfix(expr);
+    if (isValid(expr))
+    {
+        cerr << "Error: invalid expression \"" << expr << "\"" << endl;
+        cerr << "An empty tree created" << endl;
+        root = NULL;
+    }
+    else
+    {
+        root = createFromInfix(expr);
+    }
 }
 
 const ExprTree &ExprTree::operator=(const string &expr)
 {
-    // TODO: 合法性检查和规范化
+    if (isValid(expr))
+    {
+        cerr << "Error: invalid expression \"" << expr << "\"" << endl;
+        cerr << "Did nothing to *this" << endl;
+        return *this;
+    }
     if (root != NULL)
     {
         delete root;
     }
     root = createFromInfix(expr);
+    return *this;
+}
+
+bool ExprTree::isValid(const string &expr)
+{
+    set<char> validChar = {
+        '+', '-', '*', '/',
+        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+        '(', ')'}; /* 可扩展加入空格或制表符, 只不过这样就要做额外的判断 */
+
+    // 检查是否含有不合法的字符
+    for (char i : expr)
+    {
+        if (validChar.find(i) == validChar.end())
+        {
+            return true;
+        }
+    }
+
+    // TODO
+    // '(' 左边必须是运算符, 右边必须是数字
+    // ')' 左边必须是数字, 右边必须是运算符
+    // 运算符不能相邻
+
+    return false;
 }
 
 ExprTree::~ExprTree()
@@ -136,7 +174,8 @@ void ExprTree::display(ExprTreeNode *rt, int intdent) const
     {
         return;
     }
-    cout << string(intdent, ' ') << rt->val << endl;;
+    cout << string(intdent, ' ') << rt->val << endl;
+    ;
     display(rt->left, intdent + 2);
     display(rt->right, intdent + 2);
 }
@@ -146,4 +185,35 @@ void ExprTree::display() const
     display(root, 0);
 }
 
-/* 累计用时: 1.5h */
+string ExprTree::toInfixExpression(ExprTreeNode* rt) const
+{
+    if (rt->type == NUMBER)
+    {
+        return rt->val;
+    }
+
+    // 表达式二叉树的节点, 要么没有子节点, 要么有两个子节点
+    string lhs = toInfixExpression(rt->left);
+    string rhs = toInfixExpression(rt->right);
+
+    // 根据枚举类型 AtomicExpr 的定义, 可以直接用其数值除以2作为优先级
+    // +- -> 0
+    // */ -> 1
+    if (rt->type / 2 > rt->left->type / 2)
+    {
+        lhs = "(" + lhs + ")";
+    }
+    if (rt->type / 2 >= rt->right->type / 2)
+    {
+        rhs = "(" + rhs + ")";
+    }
+
+    return lhs + rt->val + rhs;
+}
+
+string ExprTree::toInfixExpression() const
+{
+    return toInfixExpression(root);
+}
+
+/* 累计用时: 2.5h */
