@@ -8,7 +8,7 @@
 #include <string>
 #include <map>
 
-enum Expr
+enum AtomicExpr
 {
     PLUS = 0,
     MINUS = 1,
@@ -26,12 +26,12 @@ const std::map<char, AtomicExpr> charToEnum = {
 class ExprTreeNode
 {
   public:
-    std::string val;                 // 该节点的值(可能是数字, 也可能是运算符)
-    Expr type;           // 该节点的类型
+    std::string val;     // 该节点的值(可能是数字, 也可能是运算符)
+    AtomicExpr type;     // 该节点的类型
     ExprTreeNode *left;  // 左子节点指针
     ExprTreeNode *right; // 右子节点指针
 
-    ExprTreeNode(const std::string &val, Expr type);
+    ExprTreeNode(const std::string &val, AtomicExpr type);
 };
 
 /* 表达式二叉树 封装 */

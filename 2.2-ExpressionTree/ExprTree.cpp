@@ -6,24 +6,21 @@
 
 using namespace std;
 
-ExprTreeNode::ExprTreeNode(
-    const string &val, Expr type)
+ExprTreeNode::ExprTreeNode(const string &val, AtomicExpr type)
     : val(val), type(type)
 {
     left = NULL;
     right = NULL;
 }
 
-ExprTreeNode *ExprTree::createFromInfix(
-    const string &expression)
+ExprTreeNode *ExprTree::createFromInfix(const string &expression)
 {
     // TODO: 合法性检查和规范化
 
     return ExprTree::_createFromInfix(expression);
 }
 
-ExprTreeNode *ExprTree::_createFromInfix(
-    const string &exp)
+ExprTreeNode *ExprTree::_createFromInfix(const string &exp)
 {
     // 传递的是 const string, 不可更改, 所以用 l, r 表示这个字符串的左右边界
     int l = 0;
