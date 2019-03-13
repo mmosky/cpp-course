@@ -6,6 +6,9 @@
 
 using namespace std;
 
+/***********/
+/* 核心函数 */
+/***********/
 void randomWalk(int N, bool &ok, int &length)
 {
     static const int dx[4] = {0, 1, -1, 0};
@@ -19,12 +22,15 @@ void randomWalk(int N, bool &ok, int &length)
     vector<vector<bool>> visited(N, vector<bool>(N, false));
     visited[x][y] = true;
 
+    int validDirections[4];
+    int cnt;
+
     while (true)
     {
-        vector<int> validDirections;
 
-        // 将可选的方向放入vector中
+        // 将可选的方向放入数组中
         // 注意: 边界之外可选, 只有已走过的位置不可以选
+        cnt = 0;
         for (int i = 0; i < 4; i++)
         {
             int nx = x + dx[i];
@@ -32,19 +38,18 @@ void randomWalk(int N, bool &ok, int &length)
             if (nx < 0 || nx >= N ||
                 ny < 0 || ny >= N || !visited[nx][ny])
             {
-                validDirections.push_back(i);
+                validDirections[cnt++] = i;
             }
         }
 
-        int size = validDirections.size();
-        if (size == 0)  // 无路可走
+        if (cnt == 0)  // 无路可走
         {
             ok = false;
             return;
         }
 
         // 随机选取方向
-        int rnd = Random::randint(0, size - 1);
+        int rnd = Random::randint(0, cnt - 1);
         x += dx[validDirections[rnd]];
         y += dy[validDirections[rnd]];
         length++;
@@ -54,7 +59,42 @@ void randomWalk(int N, bool &ok, int &length)
             ok = true;
             return;
         }
+
+        visited[x][y] = true;
     }
+}
+
+void repeatTest(
+    int N, int T,
+    double &failed,               // 失败概率
+    double &averLength,           // 平均路径长度
+    double &averFailedLength,     // 失败时平均路径长度
+    double &averSucceededLength)  // 成功时平均路径长度
+{
+    failed = 0;
+    averLength = 0;
+    averFailedLength = 0;
+    averSucceededLength = 0;
+    for (int i = 0; i < T; i++)
+    {
+        bool ok;
+        int len;
+        randomWalk(N, ok, len);
+        averLength += len;
+        if (ok)
+        {
+            averSucceededLength += len;
+        }
+        else
+        {
+            averFailedLength += len;
+            failed += 1;
+        }
+    }
+    averSucceededLength /= T;
+    averFailedLength /= failed;
+    averLength /= T - failed;
+    failed /= T;
 }
 
 /* 累计用时 20min */
