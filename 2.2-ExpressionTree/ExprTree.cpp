@@ -13,43 +13,107 @@ ExprTreeNode::ExprTreeNode(const string &val, AtomicExpr type)
     right = NULL;
 }
 
-ExprTreeNode *ExprTree::createFromInfix(const string &expression)
+ExprTreeNode::~ExprTreeNode()
 {
-    // TODO: 合法性检查和规范化
-
-    return ExprTree::_createFromInfix(expression);
+    if (left != NULL)
+    {
+        delete left;
+    }
+    if (right != NULL)
+    {
+        delete right;
+    }
 }
 
-ExprTreeNode *ExprTree::_createFromInfix(const string &exp)
+ExprTree::ExprTree(const string &expr)
+{
+    // TODO: 合法性检查和规范化
+    root = createFromInfix(expr);
+}
+
+const ExprTree &ExprTree::operator=(const string &expr)
+{
+    // TODO: 合法性检查和规范化
+    if (root != NULL)
+    {
+        delete root;
+    }
+    root = createFromInfix(expr);
+}
+
+ExprTree::~ExprTree()
+{
+    if (root != NULL)
+    {
+        delete root;
+    }
+}
+
+bool ExprTree::hasUselessBracket(const string &expr)
+{
+    int size = expr.size();
+    if (expr[0] != '(' || expr[size - 1] != ')')
+    {
+        return false;
+    }
+    int bracket = 0;
+    for (int i = 1; i < size - 1; i++)
+    {
+        bracket += (expr[i] == '(');
+        bracket -= (expr[i] == ')');
+        if (bracket < 0)
+        {
+            return false;
+        }
+    }
+    return bracket == 0;
+}
+
+ExprTreeNode *ExprTree::createFromInfix(const string &expr)
 {
     // 传递的是 const string, 不可更改, 所以用 l, r 表示这个字符串的左右边界
     int l = 0;
-    int r = exp.size();
+    int r = expr.size();
 
-    // 去括号
-    if (exp[0] == '(')
+    // 如果有套在最外面的括号则把它们去除 TODO 可以优化成一次检查?
+    while (hasUselessBracket(expr.substr(l, r - l)))
     {
         l++;
         r--;
     }
 
-    int pos1 = -1, pos2 = -1;
-    // 找到第一个不在括号内的 */ 和 +-
-    for (int i = l, lft = 0; i < r; i++)
+    // 检查 如果只含数字, 可以直接返回
+    bool isNumber = true;
+    for (int i = l; i < r; i++)
     {
-        lft += (exp[i] == '(');
-        lft -= (exp[i] == ')');
-        if (lft)
+        if (!isdigit(expr[i]))
+        {
+            isNumber = false;
+            break;
+        }
+    }
+    if (isNumber)
+    {
+        return new ExprTreeNode(expr.substr(l, r - l), NUMBER);
+    }
+
+    // 从右往左找到第一个不在括号内的 */ 和 +-
+    int pos1 = -1, pos2 = -1;
+    for (int i = r - 1, bkt = 0; i >= l; i--)
+    {
+        bkt -= (expr[i] == '(');
+        bkt += (expr[i] == ')');
+        if (bkt)
         {
             continue;
         }
-        if (pos1 < 0 && (exp[i] == '*' || exp[i] == '/'))
+        if (pos1 < 0 && (expr[i] == '+' || expr[i] == '-'))
         {
-            pos1 = i; // 第一个乘或除的位置
+            pos1 = i; // 第一个加或减的位置
         }
-        if (pos2 < 0 && (exp[i] == '+' || exp[i] == '-'))
+        if (pos2 < 0 && (expr[i] == '*' || expr[i] == '/'))
         {
-            pos2 = i; // 第一个加或减的位置
+            pos2 = i; // 第一个乘或除的位置
         }
     }
 
@@ -57,22 +121,24 @@ ExprTreeNode *ExprTree::_createFromInfix(const string &exp)
     pos1 = pos1 < 0 ? pos2 : pos1;
 
     ExprTreeNode *rt = new ExprTreeNode(
-        string(1, exp[pos1]), charToEnum.at(exp[pos1])); // 没有explicit啊, 为何不能触发隐式类型转换...
+        string(1, expr[pos1]), charToEnum.at(expr[pos1])); // 没有explicit啊, 为何不能触发隐式类型转换...
 
-    rt->left = _createFromInfix(exp.substr(l, pos1 - l));
-    rt->right = _createFromInfix(exp.substr(pos1, r - pos1));
+    // 递归建立左右子树
+    rt->left = createFromInfix(expr.substr(l, pos1 - l));
+    rt->right = createFromInfix(expr.substr(pos1 + 1, r - pos1 - 1));
+
+    return rt;
 }
 
-void ExprTree::display(
-    ExprTreeNode *rt, int intdent) const
+void ExprTree::display(ExprTreeNode *rt, int intdent) const
 {
     if (rt == NULL)
     {
         return;
     }
-    cout << string(intdent, ' ') << rt->val;
-    display(rt->left, intdent + 4);
-    display(rt->right, intdent + 4);
+    cout << string(intdent, ' ') << rt->val << endl;;
+    display(rt->left, intdent + 2);
+    display(rt->right, intdent + 2);
 }
 
 void ExprTree::display() const
@@ -80,4 +146,4 @@ void ExprTree::display() const
     display(root, 0);
 }
 
-/* 累计用时: 40min */
+/* 累计用时: 1.5h */
