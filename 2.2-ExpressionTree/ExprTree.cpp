@@ -185,7 +185,7 @@ void ExprTree::display() const
     display(root, 0);
 }
 
-string ExprTree::toInfixExpression(ExprTreeNode* rt) const
+string ExprTree::toInfixExpression(ExprTreeNode *rt) const
 {
     if (rt->type == NUMBER)
     {
@@ -214,6 +214,22 @@ string ExprTree::toInfixExpression(ExprTreeNode* rt) const
 string ExprTree::toInfixExpression() const
 {
     return toInfixExpression(root);
+}
+
+string ExprTree::toPostfixExpression(ExprTreeNode *rt) const
+{
+    if (rt->type == NUMBER)
+    {
+        return rt->val + " ";
+    }
+
+    return toPostfixExpression(rt->left) +
+           toPostfixExpression(rt->right) + rt->val + " ";
+}
+
+string ExprTree::toPostfixExpression() const
+{
+    return toPostfixExpression(root);
 }
 
 /* 累计用时: 2.5h */
