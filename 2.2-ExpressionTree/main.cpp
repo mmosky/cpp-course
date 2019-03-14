@@ -69,7 +69,7 @@ int main()
         }
 
         para = cmd.substr(pos + 1); 
-        cmd = cmd.substr(0, pos - 1);
+        cmd = cmd.substr(0, pos);
 
         // expr 命令
         if (cmd == "expr")
