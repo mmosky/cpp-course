@@ -45,6 +45,7 @@ class ExprTree
     static ExprTreeNode *createFromInfix(const std::string &expression);
     // 检查整个表达式两侧是否含有无用的括号, 比如 (1+2), ((1+2)*3)
     static bool hasUselessBracket(const std::string &expression);
+  public:
     // 检查一个表达式是否合法的
     static bool isValid(const std::string &expression);
 
