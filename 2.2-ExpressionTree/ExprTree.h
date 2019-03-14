@@ -57,6 +57,7 @@ class ExprTree
     std::string toPostfixExpression(ExprTreeNode *rt) const;
 
   public:
+    ExprTree();
     /* 建树, 首先进行合法性检查, 然后调用static私有函数生成一棵树 */
     ExprTree(const std::string &expression);
     ~ExprTree();

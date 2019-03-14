@@ -25,9 +25,14 @@ ExprTreeNode::~ExprTreeNode()
     }
 }
 
+ExprTree::ExprTree()
+{
+    root = NULL;
+}
+
 ExprTree::ExprTree(const string &expr)
 {
-    if (isValid(expr))
+    if (!isValid(expr))
     {
         cerr << "Error: invalid expression \"" << expr << "\"" << endl;
         cerr << "An empty tree created" << endl;
