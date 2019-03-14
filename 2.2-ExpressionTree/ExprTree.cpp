@@ -46,7 +46,7 @@ ExprTree::ExprTree(const string &expr)
 
 const ExprTree &ExprTree::operator=(const string &expr)
 {
-    if (isValid(expr))
+    if (!isValid(expr))
     {
         cerr << "Error: invalid expression \"" << expr << "\"" << endl;
         cerr << "Did nothing to *this" << endl;
@@ -72,16 +72,66 @@ bool ExprTree::isValid(const string &expr)
     {
         if (validChar.find(i) == validChar.end())
         {
-            return true;
+            return false;
         }
     }
 
-    // TODO
     // '(' 左边必须是运算符, 右边必须是数字
     // ')' 左边必须是数字, 右边必须是运算符
     // 运算符不能相邻
+    enum element {DIGIT, OP, LB, RB, NULLe}; // 数字, 运算符, 左括号, 右括号
+    element last = NULLe;
+    int bracket = 0;
+    int size = expr.size();
+    for (int i = 0; i < size; i++)
+    {
+        if (expr[i] == '(')
+        {
+            // 左括号前面不能是数字或右括号
+            if (last == DIGIT || last == RB)
+            {
+                return false;
+            }
+            bracket++;
+            last = LB;
+        }
+        else if (expr[i] == ')')
+        {
+            // 右括号前面不能是左括号或运算符
+            if (last == OP || last == LB || bracket == 0)
+            {
+                return false;
+            }
+            bracket--;
+            last = RB;
+        }
+        else if ('0' <= expr[i] && expr[i] <= '9')
+        {
+            // 数字前面不能是右括号
+            if (last == RB)
+            {
+                return false;
+            }
+            // 数字可能是连续的数个
+            while (i + 1 < size && '0' <= expr[i + 1] && expr[i + 1] <= '9')
+            {
+                i++;
+            }
+            last = DIGIT;
+        }
+        else
+        {
+            // 运算符前面不能为空/左括号/运算符
+            if (last == NULLe || last == LB || last == OP)
+            {
+                return false;
+            }
+            last = OP;
+        }
+    }
 
-    return false;
+    // 最后结尾的只能是数字或右括号, 且括号数量匹配
+    return (last == DIGIT || last == RB) && bracket == 0;
 }
 
 ExprTree::~ExprTree()
