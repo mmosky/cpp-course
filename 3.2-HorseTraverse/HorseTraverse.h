@@ -19,7 +19,7 @@
  *              (N, M)
  */
 
-extern const int dx[8], dy[8];
+// traceBack 中定义了静态变量 int dx[8], dy[8]
 
 /**
  * (x, y) 表示当前位置, N * M 表示地图大小
@@ -30,4 +30,4 @@ extern const int dx[8], dy[8];
 bool traceBack(
     int x, int y, int N, int M, int left,
     std::vector< std::vector<bool> > &visited,
-    std::vector<int> &paths);
+    std::vector<int> &path);

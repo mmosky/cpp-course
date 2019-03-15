@@ -1,5 +1,6 @@
 /**
  * Copyright (c) 2019 MMMMMMoSky All rights reserved.
+ * g++ HorseTraverse.cpp -o tmp
  */
 
 #include "HorseTraverse.h"
@@ -8,9 +9,6 @@
 #include <iostream>
 
 using namespace std;
-
-const int dx[8] = {-2, -1, 1, 2, 2, 1, -1, -2};
-const int dy[8] = {1, 2, 2, 1, -1, -2. -2, -1};
 
 int main()
 {
@@ -35,9 +33,10 @@ int main()
         {
             N = -1;
         }
-        if (N < 5 || N > 50)    // TODO 待确定上限
+        if (N < 5 || N > 50) // TODO 待确定上限
         {
             cout << "N 的取值范围是 [5, 50]" << endl;
+            N = -1;
         }
     }
 
@@ -68,7 +67,7 @@ int main()
         if (x < 0 || x >= N || y < 0 || y >= N)
         {
             cout << "横纵坐标取值范围为 [0, " << N << ")" << endl;
-        } 
+        }
     }
 
     // TODO: 待扩展 设置"蹩马腿"的棋子
@@ -76,5 +75,51 @@ int main()
     vector<vector<bool>> visited(N, vector<bool>(N, false));
     vector<int> path;
 
-    if ()
+    if (traceBack(x, y, N, N, N * N, visited, path))
+    {
+        cout << "有解" << endl;
+        // TODO 解的输出
+    }
+    else
+    {
+        cout << "无解" << endl;
+    }
+
+    return 0;
+}
+
+bool traceBack(
+    int x, int y, int N, int M, int left,
+    vector<vector<bool>> &visited,
+    vector<int> &path)
+{
+    static const int dx[8] = {-2, -1, 1, 2, 2, 1, -1, -2};
+    static const int dy[8] = {1, 2, 2, 1, -1, -2, -2, -1};
+
+    visited[x][y] = true;
+    left--;
+
+    if (left == 0)
+    {
+        return true;
+    }
+
+    for (int i = 0; i < 8; i++)
+    {
+        int nx = x + dx[i];
+        int ny = y + dy[i];
+        if (nx < 0 || nx >= N || ny < 0 || ny >= M || visited[nx][ny])
+        {
+            continue;
+        }
+
+        path.push_back(i);
+        if (traceBack(nx, ny, N, M, left, visited, path))
+        {
+            return true;
+        }
+        path.pop_back();
+    }
+
+    return false;
 }
