@@ -11,6 +11,7 @@
 #include <map>
 #include <set>
 
+// 枚举类型, 定义标识符对应的值, 可用于优先级计算 (值 / 2)
 enum AtomicExpr
 {
     PLUS = 0,
@@ -20,6 +21,7 @@ enum AtomicExpr
     NUMBER = 4
 };
 
+// 解析字符串时用到的映射
 const std::map<char, AtomicExpr> charToEnum = {
     {'+', PLUS},
     {'-', MINUS},
@@ -42,9 +44,11 @@ class ExprTreeNode
 class ExprTree
 {
   private:
+    // 从表达式创建树, 返回树根, 会被ExprTree的构造函数调用
     static ExprTreeNode *createFromInfix(const std::string &expression);
     // 检查整个表达式两侧是否含有无用的括号, 比如 (1+2), ((1+2)*3)
     static bool hasUselessBracket(const std::string &expression);
+
   public:
     // 检查一个表达式是否合法的
     static bool isValid(const std::string &expression);
@@ -52,6 +56,7 @@ class ExprTree
   private:
     ExprTreeNode *root; // 根节点
 
+    /* 私有成员函数实现 分别为: 打印树; 返回中缀串; 返回后缀串 */
     void display(ExprTreeNode *rt, int intdent) const;
     std::string toInfixExpression(ExprTreeNode *rt) const;
     std::string toPostfixExpression(ExprTreeNode *rt) const;
@@ -71,7 +76,7 @@ class ExprTree
 
     const ExprTree &operator=(const std::string &expression);
 
-    /* 用户接口 */
+    /* 用户接口 分别为: 打印树; 返回中缀串; 返回后缀串 */
     void display() const;
     std::string toInfixExpression() const;
     std::string toPostfixExpression() const;
