@@ -242,6 +242,11 @@ void ExprTree::display() const
 
 string ExprTree::toInfixExpression(ExprTreeNode *rt) const
 {
+    if (rt == NULL)
+    {
+        return "";
+    }
+
     if (rt->type == NUMBER)
     {
         return rt->val;
@@ -273,6 +278,11 @@ string ExprTree::toInfixExpression() const
 
 string ExprTree::toPostfixExpression(ExprTreeNode *rt) const
 {
+    if (rt == NULL)
+    {
+        return "";
+    }
+
     if (rt->type == NUMBER)
     {
         return rt->val + " ";
