@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2019 MMMMMMoSky All rights reserved.
- * g++ HorseTraverse.cpp -o tmp
+ * g++ HorseTraverse.cpp -o tmp -std=c++11
  */
 
 #include "HorseTraverse.h"
@@ -9,6 +9,9 @@
 #include <iostream>
 
 using namespace std;
+
+const int dx[8] = {-2, -1, 1, 2, 2, 1, -1, -2};
+const int dy[8] = {1, 2, 2, 1, -1, -2, -2, -1};
 
 int main()
 {
@@ -44,7 +47,7 @@ int main()
     int x = -1, y = -1;
     while (x < 0)
     {
-        cout << "请输入马的初始位置坐标(两个整数, 空格隔开): ";
+        cout << "请输入马的初始位置坐标(从0开始, 空格隔开的两个整数): ";
         getline(cin, line);
         int pos = line.find(' ');
         if (pos == line.npos)
@@ -75,10 +78,22 @@ int main()
     vector<vector<bool>> visited(N, vector<bool>(N, false));
     vector<int> path;
 
+    visited[x][y] = true;
     if (traceBack(x, y, N, N, N * N, visited, path))
     {
-        cout << "有解" << endl;
-        // TODO 解的输出
+        cout << "下面是一条合法的路径, 不重复地遍历所有的点:\n";
+        // 打印路径
+        for (int i = 1; i < N * N; i++)
+        {
+            printf("(%d,%d) -> ", x, y);
+            x += dx[path[i - 1]];
+            y += dy[path[i - 1]];
+            if (i % 5 == 0)
+            {
+                putchar('\n');
+            }
+        }
+        printf("(%d,%d) Over!\n", x, y);
     }
     else
     {
@@ -93,10 +108,6 @@ bool traceBack(
     vector<vector<bool>> &visited,
     vector<int> &path)
 {
-    static const int dx[8] = {-2, -1, 1, 2, 2, 1, -1, -2};
-    static const int dy[8] = {1, 2, 2, 1, -1, -2, -2, -1};
-
-    visited[x][y] = true;
     left--;
 
     if (left == 0)
@@ -114,10 +125,12 @@ bool traceBack(
         }
 
         path.push_back(i);
+        visited[nx][ny] = true;
         if (traceBack(nx, ny, N, M, left, visited, path))
         {
             return true;
         }
+        visited[nx][ny] = false;
         path.pop_back();
     }
 

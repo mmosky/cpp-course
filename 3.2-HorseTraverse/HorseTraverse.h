@@ -19,7 +19,9 @@
  *              (N, M)
  */
 
-// traceBack 中定义了静态变量 int dx[8], dy[8]
+extern const int dx[8];
+extern const int dy[8];
+
 
 /**
  * (x, y) 表示当前位置, N * M 表示地图大小
