@@ -24,6 +24,9 @@ void randomGenerateEdges(DirectedGraph &g, int edgeNum); // 随机生成所有�
  */
 void getDfsPath(int now, DirectedGraph &g, vector<bool> &visited, vector<int> &path);
 
+// 打印图g从startNode开始dfs的路径
+void printDfsPath(int startNode, DirectedGraph &g, vector<bool> &visited);
+
 ////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////// 主函数 ///////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
@@ -54,22 +57,57 @@ int main()
     int startNode = RangeIO::readIntFromLine(cin, nodeNum - 1);
     vector<bool> visited(nodeNum, false);
 
+    printDfsPath(startNode, g, visited);
+
+    while (find(visited.begin(), visited.end(), false) != visited.end())
+    {
+        cout << "由于图中所有的点不是连通的, 下面的点还没有访问" << endl;
+        for (int i = 0, cnt = 0; i < nodeNum; i++)
+        {
+            if (!visited[i])
+            {
+                cout << i << " ";
+                cnt++;
+                if (cnt % 5 == 0)
+                {
+                    cout << endl;
+                }
+            }
+        }
+        cout << "\n是否在其中选择一个起点, 再次进行深度优先遍历?" << endl;
+        cout << "输入起点编号以开始, 输入 -1 以退出: ";
+        startNode = RangeIO::readIntFromLine(cin, -1, nodeNum - 1);
+        while (startNode >= 0 && visited[startNode])
+        {
+            cout << "请输入一个上面列出的还未访问过的点: ";
+            startNode = RangeIO::readIntFromLine(cin, -1, nodeNum - 1);
+        }
+        if (startNode < 0)
+        {
+            break;
+        }
+        printDfsPath(startNode, g, visited);
+    }
+
+    return 0;
+}
+
+void printDfsPath(int startNode, DirectedGraph &g, vector<bool> &visited)
+{
     cout << "\n准备开始深度优先遍历...\n";
     vector<int> path;
     getDfsPath(startNode, g, visited, path);
 
-    cout << startNode << ' ';
+    cout << "path:\n  " << startNode << ' ';
     for (int i = 1; i < path.size(); i++)
     {
         cout << "-> " << path[i] << ' ';
         if (i % 5 == 0)
         {
-            cout << endl;
+            cout << endl << "  ";
         }
     }
     cout << "Over" << endl;
-
-    return 0;
 }
 
 void manulInputEdges(DirectedGraph &g, int edgeNum)
