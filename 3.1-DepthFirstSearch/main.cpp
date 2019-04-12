@@ -6,27 +6,30 @@
 
 #include "DirectedGraph.h"
 #include "RangeIO.h"
+#include "Random.h"
+
+#include <set>
 #include <iostream>
 
 using namespace std;
 
-void manulInputEdges(DirectedGraph &g, int edgeNum);        // 手动输入所有的边
-void randomGenerateEdges(DirectedGraph &g, int edgeNum);    // 随机生成所有的边
+void manulInputEdges(DirectedGraph &g, int edgeNum);     // 手动输入所有的边
+void randomGenerateEdges(DirectedGraph &g, int edgeNum); // 随机生成所有的边
 /**
  * @param now (int): 当前正在访问的节点编号
- * @param depth (int): 当前节点在搜索树中的深度
  * @param g (DirectedGraph): 当前dfs遍历的图
  * @param visited (vector<bool>): visited[i] 表示编号为i的点是否已经访问过
+ * @param path (vector<int>): 记录dfs的路径
  * @return: void
  */
-void printDfsTree(int now, int depth, DirectedGraph &g, vector<bool> &visited);
+void getDfsPath(int now, DirectedGraph &g, vector<bool> &visited, vector<int> &path);
 
 ////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////// 主函数 ///////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
 int main()
 {
-    cout << ">>>>>>>>>> 图的深度优先遍历演示 <<<<<<<<<<" << endl;
+    cout << ">>>>>>>>>> 有向图的深度优先遍历演示 <<<<<<<<<<" << endl;
 
     cout << "  请输入图的大小(节点数目): ";
     int nodeNum = RangeIO::readIntFromLine(cin, 1, 10000);
@@ -52,23 +55,65 @@ int main()
     vector<bool> visited(nodeNum, false);
 
     cout << "\n准备开始深度优先遍历...\n";
-    printDfsTree(startNode, 0, g, visited);
+    vector<int> path;
+    getDfsPath(startNode, g, visited, path);
+
+    cout << startNode << ' ';
+    for (int i = 1; i < path.size(); i++)
+    {
+        cout << "-> " << path[i] << ' ';
+        if (i % 5 == 0)
+        {
+            cout << endl;
+        }
+    }
+    cout << "Over" << endl;
 
     return 0;
 }
 
 void manulInputEdges(DirectedGraph &g, int edgeNum)
 {
-    // TODO
+    int nodeNum = g.getNodeNum();
+    printf("  点以编号标识, 共有 %d 个点, 因此编号范围是 [0, %d)\n", nodeNum, nodeNum);
+    printf("  请根据提示添加每条边\n");
+    for (int i = 1; i <= edgeNum; i++)
+    {
+        printf("  请输入第 %d 条边的起点: ", i);
+        int u = RangeIO::readIntFromLine(cin, 0, nodeNum - 1);
+        printf("  请输入第 %d 条边的终点: ", i);
+        int v = RangeIO::readIntFromLine(cin, 0, nodeNum - 1);
+        g.addEdge(u, v);
+    }
 }
 
 void randomGenerateEdges(DirectedGraph &g, int edgeNum)
 {
     // 随机生成的边不包含自回路/重边
-    // TODO
+    set<pair<int, int>> edgeSet; // 边的集合, 避免生成重复的边
+    pair<int, int> anEdge;
+    int nodeNum = g.getNodeNum();
+    for (int i = 0; i < edgeNum; i++)
+    {
+        anEdge.first = anEdge.second = 0;
+        while (anEdge.first == anEdge.second || edgeSet.find(anEdge) != edgeSet.end())
+        {
+            anEdge.first = Random::randint(0, nodeNum - 1);
+            anEdge.second = Random::randint(0, nodeNum - 1);
+        }
+        g.addEdge(anEdge.first, anEdge.second);
+    }
 }
 
-void printDfsTree(int now, int depth, DirectedGraph &g, vector<bool> &visited)
+void getDfsPath(int now, DirectedGraph &g, vector<bool> &visited, vector<int> &path)
 {
-    // TODO
+    visited[now] = true;
+    path.push_back(now);
+    for (int nxt : g.getLinkedNodes(now))
+    {
+        if (!visited[nxt])
+        {
+            getDfsPath(nxt, g, visited, path);
+        }
+    }
 }
