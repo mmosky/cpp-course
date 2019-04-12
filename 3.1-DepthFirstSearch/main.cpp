@@ -57,3 +57,18 @@ int main()
     return 0;
 }
 
+void manulInputEdges(DirectedGraph &g, int edgeNum)
+{
+    // TODO
+}
+
+void randomGenerateEdges(DirectedGraph &g, int edgeNum)
+{
+    // 随机生成的边不包含自回路/重边
+    // TODO
+}
+
+void printDfsTree(int now, int depth, DirectedGraph &g, vector<bool> &visited)
+{
+    // TODO
+}
