@@ -35,11 +35,11 @@
 #include <Windows.h>
 #endif
 
-#include "Sleep.h"
+#include "MySleep.h"
 #include <iostream>
 using namespace std;
 
-void Sleep::mSleep(unsigned int ms)
+void MySleep::mSleep(unsigned int ms)
 {
 #ifdef IMPOSSIBLE_ERROR
     cout << "Impossible error: Your environment is both Unix-Like and Windows?" << endl;

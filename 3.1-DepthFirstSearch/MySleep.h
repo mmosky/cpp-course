@@ -10,7 +10,7 @@
  *  Windows                 _WIN32 _WIN64
  */
 
-class Sleep
+class MySleep
 {
   public:
     // 单位: 毫秒
