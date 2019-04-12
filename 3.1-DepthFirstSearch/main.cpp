@@ -1,12 +1,13 @@
 /**
  * Copyright (c) 2019 MMMMMMoSky All rights reserved.
  * 
- * g++ DirectedGraph.cpp RangeIO.cpp main.cpp -o tmp -std=c++11
+ * g++ DirectedGraph.cpp RangeIO.cpp Random.cpp Sleep.cpp main.cpp -o tmp -std=c++11
  */
 
 #include "DirectedGraph.h"
 #include "RangeIO.h"
 #include "Random.h"
+#include "Sleep.h"
 
 #include <set>
 #include <iostream>
@@ -61,7 +62,8 @@ int main()
 
     while (find(visited.begin(), visited.end(), false) != visited.end())
     {
-        cout << "由于图中所有的点不是连通的, 下面的点还没有访问" << endl;
+        Sleep::mSleep(1000);
+        cout << "\n由于图中所有的点不完全连通, 下面这些点还没有访问" << endl;
         for (int i = 0, cnt = 0; i < nodeNum; i++)
         {
             if (!visited[i])
@@ -71,6 +73,7 @@ int main()
                 if (cnt % 5 == 0)
                 {
                     cout << endl;
+                    Sleep::mSleep(200);
                 }
             }
         }
@@ -106,6 +109,8 @@ void printDfsPath(int startNode, DirectedGraph &g, vector<bool> &visited)
         {
             cout << endl << "  ";
         }
+        cout.flush();   // flush 以立刻输出, 否则会缓冲直到输出回车
+        Sleep::mSleep(200);
     }
     cout << "Over" << endl;
 }
