@@ -36,9 +36,9 @@ int main()
         {
             N = -1;
         }
-        if (N < 5 || N > 100) // TODO 待确定上限
+        if (N < 5 || N > 8) 
         {
-            cout << "N 的取值范围是 [5, 100]" << endl;
+            cout << "N 的取值范围是 [5, 8]" << endl;
             N = -1;
         }
     }
@@ -56,7 +56,7 @@ int main()
         }
         try
         {
-            x = stoi(line.substr(pos));
+            x = stoi(line.substr(0, pos));
             y = stoi(line.substr(pos, line.size() - pos));
         }
         catch (const out_of_range &e)
